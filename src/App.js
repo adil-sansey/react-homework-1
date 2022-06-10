@@ -6,12 +6,10 @@ import Header from './components/Header/Header';
 
 class App extends React.Component {
   render() {
-    const headerText = 'Создание анкеты';
-
     return (
       <div className="App">
-        <Header headerText={headerText}></Header>
-        <Form></Form>
+        <Header>Создание анкеты</Header>
+        <Form />
       </div>
     );
   }

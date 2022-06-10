@@ -4,11 +4,7 @@
   border-radius: 1em;
 }
 
-.formList {
-  list-style: none;
-}
-
-.formList li + li {
+.form div + div {
   margin-top: 1em;
 }
 
