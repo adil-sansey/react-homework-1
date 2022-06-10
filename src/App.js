@@ -1,25 +1,20 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Form from './components/Form/Form';
+import Header from './components/Header/Header';
+
+class App extends React.Component {
+  render() {
+    const headerText = 'Создание анкеты';
+
+    return (
+      <div className="App">
+        <Header headerText={headerText}></Header>
+        <Form></Form>
+      </div>
+    );
+  }
 }
 
 export default App;
