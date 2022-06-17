@@ -20,3 +20,34 @@
   border: 1px solid #2f80ed;
   border-radius: 7px;
 }
+
+.valid_value {
+  border: 1px solid green;
+}
+
+.invalid_value {
+  border: 1px solid red;
+}
+
+.invalid_value:focus {
+  border: 1px solid red;
+}
+
+.valid_value:focus {
+  border: 1px solid green;
+}
+
+.message {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.valid_message {
+  color: #161616;
+}
+
+.invalid_message {
+  color: red;
+}

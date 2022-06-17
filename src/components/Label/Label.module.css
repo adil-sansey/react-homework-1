@@ -11,3 +11,7 @@
 
   color: #161616;
 }
+
+.required {
+  color: red;
+}
