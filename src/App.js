@@ -1,45 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 import Form from './components/Form/Form';
-import Header from './components/Header/Header';
 import Profile from './components/Profile/Profile';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      info: null,
-      isValidData: false,
-    };
+import { Route, Routes, useNavigate } from 'react-router-dom';
+
+function App() {
+  const [info, setInfo] = useState(null);
+  const navigate = useNavigate();
+
+  function submitButtonHandler(state) {
+    setInfo(state);
+    navigate('/react-homework-1/profile');
   }
 
-  handleClick = (state) => {
-    let isValidData = true;
-
-    for (let prop in state) {
-      if (!state[prop].isValid) {
-        isValidData = false;
-      }
-    }
-
-    this.setState({ isValidData, info: state });
-  };
-
-  render() {
-    return (
-      <div className="App">
-        {!this.state.isValidData ? (
-          <>
-            <Header>Создание анкеты</Header>
-            <Form onSubmit={this.handleClick} />
-          </>
-        ) : (
-          <Profile info={this.state.info} />
-        )}
-      </div>
-    );
+  function goBackButtonHandler() {
+    setInfo(null);
+    navigate('/react-homework-1');
   }
+
+  return (
+    <div className="App">
+      <Routes>
+        <Route path="/react-homework-1" element={<Form onSubmit={submitButtonHandler} />} />
+        <Route
+          path="/react-homework-1/profile"
+          element={<Profile info={info} onClick={goBackButtonHandler} />}
+        />
+      </Routes>
+    </div>
+  );
 }
 
 export default App;

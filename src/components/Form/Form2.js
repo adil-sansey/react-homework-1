@@ -1,50 +1,47 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './Form.module.css';
 import { formTemplate } from '../../mocks/formTemplate';
 import { formDefaultState } from '../../mocks/formDefaultState';
-import Header from '../Header/Header';
 import TextInput from '../TextInput/TextInput';
 import Textarea from '../Textarea/Textarea';
 import Button from '../Button/Button';
 
-function Form(props) {
-  const [userData, setUserData] = useState(formDefaultState);
+class Form extends React.Component {
+  constructor(props) {
+    super(props);
 
-  function submitButtonClickHandler(e) {
-    e.preventDefault();
+    this.state = formDefaultState;
+  }
 
-    const userDataChanges = {};
-    let isValidData = true;
+  submitButtonClickHandler = (event) => {
+    event.preventDefault();
 
-    for (let prop in userData) {
-      const elem = userData[prop];
+    for (let prop in this.state) {
+      const elem = this.state[prop];
 
       if (elem.isValid === null) {
-        isValidData = false;
-        userDataChanges[prop] = { ...elem, isValid: false };
+        this.setState((prevState) => ({
+          ...prevState,
+          [prop]: { ...prevState[prop], isValid: false },
+        }));
       }
     }
 
-    setUserData({ ...userData, ...userDataChanges });
+    this.props.onSubmit(this.state);
+  };
 
-    if (!isValidData) {
-      return;
-    }
+  canselButtonClickHandler = (event) => {
+    event.preventDefault();
 
-    props.onSubmit(userData);
-  }
+    this.setState(formDefaultState);
+  };
 
-  function canselButtonClickHandler(e) {
-    e.preventDefault();
-
-    setUserData(formDefaultState);
-  }
-
-  function inputChangeHandler(e) {
-    const elem = e.target;
+  inputChangeHandler = (event) => {
+    const elem = event.target;
     let value = elem.value;
     let tel = value.replace(/-/g, '');
     let isValid = true;
+    let length = 0;
 
     switch (elem.id) {
       case 'name':
@@ -82,40 +79,46 @@ function Form(props) {
         if (value.length === 0 || value.length > 600) {
           isValid = false;
         }
+
+        length = value.length;
         break;
 
       default:
         break;
     }
 
-    if (elem.id === 'phoneNumber') {
-      setUserData({ ...userData, [elem.id]: { value, tel, isValid } });
+    if (elem.id === 'about' || elem.id === 'technologyStack' || elem.id === 'aboutLastProject') {
+      this.setState({ [elem.id]: { value, isValid, length } });
+    } else if (elem.id === 'phoneNumber') {
+      this.setState({ [elem.id]: { value, tel, isValid } });
     } else {
-      setUserData({ ...userData, [elem.id]: { value, isValid } });
+      this.setState({ [elem.id]: { value, isValid } });
     }
 
-    // setTimeout(() => {
-    //   console.log(userData);
-    // });
-  }
+    setTimeout(() => {
+      console.log(this.state);
+    });
+  };
 
-  function onKeyPressed(event) {
+  onKeyPressed = (event) => {
     if (event.key === 'Backspace') {
       const elem = event.target;
-      const prevTel = userData.phoneNumber.value;
-      const length = prevTel.length;
 
-      const newTel = prevTel[length - 1] === '-' ? prevTel.slice(0, length - 1) : prevTel.slice();
+      this.setState((prevState) => {
+        const prevTel = prevState.phoneNumber.value;
+        const length = prevTel.length;
 
-      const isValid = !!newTel.length;
+        const newTel = prevTel[length - 1] === '-' ? prevTel.slice(0, length - 1) : prevTel.slice();
 
-      setUserData({ ...userData, [elem.id]: { value: newTel, isValid } });
+        const isValid = !!newTel.length;
+
+        return { ...prevState, [elem.id]: { value: newTel, isValid } };
+      });
     }
-  }
+  };
 
-  return (
-    <>
-      <Header>Создание анкеты</Header>
+  render() {
+    return (
       <form action="" method="" className={styles.form}>
         {formTemplate.map((elem, index) => {
           switch (elem.type) {
@@ -124,9 +127,9 @@ function Form(props) {
                 <div key={index}>
                   <TextInput
                     type={elem.type}
-                    value={userData[elem.id].value}
-                    isValid={userData[elem.id].isValid}
-                    onChange={inputChangeHandler}
+                    value={this.state[elem.id].value}
+                    isValid={this.state[elem.id].isValid}
+                    onChange={this.inputChangeHandler}
                     id={elem.id}
                     placeholder={elem.placeholder}
                     message={elem.invalidMessage}
@@ -138,9 +141,9 @@ function Form(props) {
                 <div key={index}>
                   <TextInput
                     type={elem.type}
-                    value={userData[elem.id].value}
-                    isValid={userData[elem.id].isValid}
-                    onChange={inputChangeHandler}
+                    value={this.state[elem.id].value}
+                    isValid={this.state[elem.id].isValid}
+                    onChange={this.inputChangeHandler}
                     id={elem.id}
                     placeholder={elem.placeholder}
                   />
@@ -151,10 +154,10 @@ function Form(props) {
                 <div key={index}>
                   <TextInput
                     type={elem.type}
-                    value={userData[elem.id].value}
-                    isValid={userData[elem.id].isValid}
-                    onChange={inputChangeHandler}
-                    onKeyDown={onKeyPressed}
+                    value={this.state[elem.id].value}
+                    isValid={this.state[elem.id].isValid}
+                    onChange={this.inputChangeHandler}
+                    onKeyDown={this.onKeyPressed}
                     id={elem.id}
                     placeholder={elem.placeholder}
                     message={elem.invalidMessage}
@@ -165,12 +168,12 @@ function Form(props) {
               return (
                 <div key={index}>
                   <Textarea
-                    value={userData[elem.id].value}
-                    isValid={userData[elem.id].isValid}
+                    value={this.state[elem.id].value}
+                    isValid={this.state[elem.id].isValid}
                     id={elem.id}
-                    onChange={inputChangeHandler}
+                    onChange={this.inputChangeHandler}
                     placeholder={elem.placeholder}
-                    length={userData[elem.id].length}
+                    length={this.state[elem.id].length}
                     rows={elem.rows}
                     message={elem.invalidMessage}
                   />
@@ -185,7 +188,9 @@ function Form(props) {
                     type={button.type}
                     text={button.text}
                     onClick={
-                      button.id === 'submit' ? submitButtonClickHandler : canselButtonClickHandler
+                      button.id === 'submit'
+                        ? this.submitButtonClickHandler
+                        : this.canselButtonClickHandler
                     }
                   />
                 );
@@ -203,8 +208,8 @@ function Form(props) {
           return null;
         })}
       </form>
-    </>
-  );
+    );
+  }
 }
 
 export default Form;
